@@ -1,0 +1,475 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Invitación y Confirmación de Boda</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Pinyon+Script&display=swap');
+
+        :root {
+            --gold: #c5a880;
+            --gold-dark: #a88a5f;
+            --text-dark: #4a4a4a;
+            --text-light: #777;
+            --bg-light: #fdfcfb;
+        }
+
+        body, html {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            font-family: 'Montserrat', sans-serif;
+            overflow-x: hidden;
+            background-color: #f4efeb;
+        }
+
+        #pantalla-sobre {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #fdfcfb 0%, #e2d1c3 100%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            transition: transform 1.2s cubic-bezier(0.77, 0, 0.175, 1), opacity 1.2s ease;
+        }
+
+        #pantalla-sobre.abierto {
+            transform: translateY(-100vh);
+            opacity: 0;
+        }
+
+        .sobre-contenido {
+            background: #ffffff;
+            padding: 60px 40px;
+            text-align: center;
+            border-radius: 4px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.08);
+            border: 1px solid rgba(197, 168, 128, 0.3);
+            max-width: 400px;
+            width: 85%;
+            position: relative;
+        }
+
+        .sobre-contenido::before {
+            content: '';
+            position: absolute;
+            top: 15px; left: 15px; right: 15px; bottom: 15px;
+            border: 1px solid var(--gold);
+            opacity: 0.5;
+            pointer-events: none;
+        }
+
+        .sello-boda {
+            font-family: 'Pinyon Script', cursive;
+            font-size: 3.5em;
+            color: var(--gold);
+            margin-bottom: 10px;
+            line-height: 1;
+        }
+
+        .sobre-texto {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.2em;
+            color: var(--text-dark);
+            margin-bottom: 40px;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
+
+        .btn-abrir {
+            background-color: var(--gold);
+            color: white;
+            border: none;
+            padding: 15px 35px;
+            font-size: 0.9em;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            cursor: pointer;
+            border-radius: 50px;
+            transition: all 0.3s ease;
+            font-family: 'Montserrat', sans-serif;
+            box-shadow: 0 8px 20px rgba(197, 168, 128, 0.4);
+        }
+
+        .btn-abrir:hover {
+            background-color: var(--gold-dark);
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(197, 168, 128, 0.6);
+        }
+
+        #contenido-principal {
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 40px 20px;
+            background-image: url('https://images.unsplash.com/photo-1519225421980-715cb0215aed?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            position: relative;
+        }
+
+        #contenido-principal::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(255, 255, 255, 0.4);
+            backdrop-filter: blur(4px);
+            -webkit-backdrop-filter: blur(4px);
+        }
+
+        .form-container {
+            position: relative;
+            background: rgba(255, 255, 255, 0.95);
+            padding: 50px 40px;
+            border-radius: 8px;
+            box-shadow: 0 25px 50px rgba(0,0,0,0.1);
+            max-width: 500px;
+            width: 100%;
+            border: 1px solid rgba(255, 255, 255, 0.8);
+            text-align: center;
+        }
+
+        .flores-decorativas {
+            font-family: 'Pinyon Script', cursive;
+            color: var(--gold);
+            font-size: 2.5em;
+            margin-bottom: -10px;
+        }
+
+        h1 {
+            font-family: 'Playfair Display', serif;
+            color: var(--text-dark);
+            font-size: 2.6em;
+            margin-bottom: 5px;
+            font-weight: 700;
+        }
+
+        .subtitle {
+            font-family: 'Playfair Display', serif;
+            font-style: italic;
+            color: var(--text-light);
+            margin-bottom: 30px;
+            font-size: 1.1em;
+        }
+
+        .separador {
+            width: 50px;
+            height: 2px;
+            background-color: var(--gold);
+            margin: 0 auto 35px auto;
+        }
+
+        .form-group {
+            text-align: left;
+            margin-bottom: 25px;
+        }
+
+        label {
+            display: block;
+            font-weight: 500;
+            margin-bottom: 8px;
+            font-size: 0.8em;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            color: var(--text-dark);
+        }
+
+        input[type="text"], 
+        input[type="number"] {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid #dcdcdc;
+            border-radius: 4px;
+            box-sizing: border-box;
+            font-family: inherit;
+            font-size: 1em;
+            background-color: #fafafa;
+            transition: all 0.3s ease;
+            color: var(--text-dark);
+        }
+
+        input:focus {
+            outline: none;
+            border-color: var(--gold);
+            background-color: #fff;
+            box-shadow: 0 0 8px rgba(197, 168, 128, 0.2);
+        }
+
+        .radio-group {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-top: 10px;
+        }
+
+        .radio-label {
+            text-transform: none;
+            font-weight: 400;
+            letter-spacing: normal;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+            color: #555;
+            font-size: 1em;
+            background: #f9f7f4;
+            padding: 12px 15px;
+            border-radius: 4px;
+            border: 1px solid #eee;
+            transition: border-color 0.3s;
+        }
+
+        .radio-label:hover {
+            border-color: var(--gold);
+        }
+
+        input[type="radio"] {
+            accent-color: var(--gold);
+            width: 18px;
+            height: 18px;
+        }
+
+        .children-section {
+            display: none;
+            background-color: rgba(197, 168, 128, 0.05);
+            padding: 20px;
+            border-radius: 6px;
+            border-left: 3px solid var(--gold);
+            margin-top: 15px;
+            animation: fadeIn 0.4s ease-in-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .btn-submit {
+            background-color: var(--text-dark);
+            color: white;
+            border: none;
+            padding: 18px 30px;
+            font-size: 0.9em;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.1s ease;
+            width: 100%;
+            font-weight: 500;
+            margin-top: 20px;
+        }
+
+        .btn-submit:hover {
+            background-color: var(--gold);
+        }
+
+        .btn-submit:active {
+            transform: scale(0.98);
+        }
+
+        .btn-submit:disabled {
+            background-color: #ccc;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        #mensaje-exito, #mensaje-error {
+            display: none;
+            padding: 30px 0;
+            animation: fadeIn 0.8s ease;
+        }
+        
+        #mensaje-exito h2 {
+            font-family: 'Pinyon Script', cursive;
+            color: var(--gold);
+            font-size: 3.5em;
+            margin-bottom: 10px;
+            line-height: 1;
+        }
+
+        #mensaje-error {
+            background-color: #fee;
+            border: 1px solid #fcc;
+            border-radius: 8px;
+            color: #c00;
+            margin-bottom: 20px;
+            padding: 15px;
+        }
+
+        @media (max-width: 600px) {
+            .form-container, .sobre-contenido {
+                padding: 40px 25px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div id="pantalla-sobre">
+        <div class="sobre-contenido">
+            <div class="sello-boda">E & E</div>
+            <p class="sobre-texto">Tienes una nueva notificación</p>
+            <button class="btn-abrir" id="btn-abrir" type="button">Abrir Invitación</button>
+        </div>
+    </div>
+
+    <div id="contenido-principal">
+        <div class="form-container">
+            <div class="flores-decorativas">Con amor</div>
+            <h1>Nuestra Boda</h1>
+            <p class="subtitle">Confirma tu asistencia y acompáñanos a celebrar</p>
+            <div class="separador"></div>
+
+            <div id="mensaje-error">
+                Hubo un error de conexión. Por favor, intenta de nuevo.
+            </div>
+
+            <div id="mensaje-exito">
+                <h2>¡Gracias!</h2>
+                <p class="subtitle" style="margin-bottom: 0;">Hemos registrado tu respuesta exitosamente.<br>¡Nos hace mucha ilusión!</p>
+            </div>
+
+            <form id="rsvp-form">
+                <div class="form-group">
+                    <label for="nombre">Nombre y Apellidos</label>
+                    <input type="text" id="nombre" name="nombre" placeholder="Ej. Familia García López" required>
+                </div>
+
+                <div class="form-group">
+                    <label>Confirmación de asistencia</label>
+                    <div class="radio-group">
+                        <label class="radio-label">
+                            <input type="radio" name="asistencia" value="si" required> 
+                            <span>Sí, estaremos allí celebrando</span>
+                        </label>
+                        <label class="radio-label">
+                            <input type="radio" name="asistencia" value="no"> 
+                            <span>Lamentablemente, no podremos asistir</span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="adultos">Número de Adultos</label>
+                    <input type="number" id="adultos" name="adultos" min="1" max="10" placeholder="Ej. 2" required>
+                </div>
+
+                <div class="form-group">
+                    <label>¿Les acompañarán niños?</label>
+                    <div class="radio-group">
+                        <label class="radio-label">
+                            <input type="radio" name="ninos_asistencia" value="si" onchange="toggleNinos(true)"> 
+                            <span>Sí, llevamos a los peques</span>
+                        </label>
+                        <label class="radio-label">
+                            <input type="radio" name="ninos_asistencia" value="no" onchange="toggleNinos(false)" checked> 
+                            <span>No, iremos sin niños</span>
+                        </label>
+                    </div>
+
+                    <div class="children-section" id="seccion_ninos">
+                        <label for="num_ninos">¿Cuántos niños asisten?</label>
+                        <input type="number" id="num_ninos" name="num_ninos" min="1" max="10" placeholder="Ej. 1">
+                    </div>
+                </div>
+
+                <button type="submit" class="btn-submit" id="btn-submit">Enviar Respuesta</button>
+            </form>
+        </div>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+        // Interfaz: Apertura del sobre
+        document.getElementById('btn-abrir').addEventListener('click', function() {
+            const pantallaSobre = document.getElementById('pantalla-sobre');
+            pantallaSobre.classList.add('abierto');
+            setTimeout(() => {
+                pantallaSobre.style.display = 'none';
+            }, 1200);
+        });
+
+        // Interfaz: Mostrar/Ocultar sección de niños
+        window.toggleNinos = function(mostrar) {
+            const seccion = document.getElementById('seccion_ninos');
+            const inputNinos = document.getElementById('num_ninos');
+            if (mostrar) {
+                seccion.style.display = 'block';
+                inputNinos.setAttribute('required', 'true');
+            } else {
+                seccion.style.display = 'none';
+                inputNinos.removeAttribute('required');
+                inputNinos.value = '';
+            }
+        };
+
+        // --- LÓGICA DE FIREBASE CON TUS CREDENCIALES ---
+        const firebaseConfig = {
+            apiKey: "AIzaSyAkIglpZfb1d-38Z5EVqLIRO3X3_ggR2lk",
+            authDomain: "boda-7968e.firebaseapp.com",
+            databaseURL: "https://boda-7968e-default-rtdb.europe-west1.firebasedatabase.app",
+            projectId: "boda-7968e",
+            storageBucket: "boda-7968e.firebasestorage.app",
+            messagingSenderId: "997861325171",
+            appId: "1:997861325171:web:3d5c3ddbd95ede37c72d06",
+            measurementId: "G-9S1VMEZW7B"
+        };
+        
+        // Inicializar Firebase
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+        
+        const form = document.getElementById('rsvp-form');
+        const btnSubmit = document.getElementById('btn-submit');
+        const errorBox = document.getElementById('mensaje-error');
+
+        // Escuchar el evento de envío del formulario
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            errorBox.style.display = 'none';
+            
+            btnSubmit.innerText = "Enviando...";
+            btnSubmit.disabled = true;
+
+            const formData = new FormData(form);
+            const asiste = formData.get('asistencia') === 'si';
+            const llevanNinos = formData.get('ninos_asistencia') === 'si';
+            
+            const rsvpData = {
+                nombre: formData.get('nombre'),
+                asistencia: asiste,
+                adultos: asiste ? (parseInt(formData.get('adultos')) || 0) : 0,
+                llevan_ninos: asiste ? llevanNinos : false,
+                num_ninos: (asiste && llevanNinos) ? (parseInt(formData.get('num_ninos')) || 0) : 0,
+                fecha_confirmacion: new Date().toISOString()
+            };
+
+            try {
+                // Guardar datos en la colección "invitados" de Firestore
+                const rsvpRef = collection(db, 'invitados');
+                await addDoc(rsvpRef, rsvpData);
+                
+                // Éxito: Ocultar formulario, mostrar agradecimiento
+                form.style.display = 'none';
+                document.getElementById('mensaje-exito').style.display = 'block';
+            } catch (error) {
+                console.error("Error guardando documento:", error);
+                errorBox.innerHTML = "Error al guardar. Asegúrate de haber actualizado las <b>Reglas de Firestore</b> a <i>allow read, write: if true;</i>";
+                errorBox.style.display = 'block';
+                btnSubmit.innerText = "Enviar Respuesta";
+                btnSubmit.disabled = false;
+            }
+        });
+    </script>
+</body>
+</html>
