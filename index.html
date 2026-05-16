@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Invitación y Confirmación de Boda</title>
+    <title>Invitación y Confirmación | Estefy y Ema</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Pinyon+Script&display=swap');
 
@@ -75,7 +75,7 @@
 
         .sobre-texto {
             font-family: 'Playfair Display', serif;
-            font-size: 1.2em;
+            font-size: 1.1em;
             color: var(--text-dark);
             margin-bottom: 40px;
             letter-spacing: 2px;
@@ -140,8 +140,9 @@
         .flores-decorativas {
             font-family: 'Pinyon Script', cursive;
             color: var(--gold);
-            font-size: 2.5em;
+            font-size: 2.3em;
             margin-bottom: -10px;
+            line-height: 1.2;
         }
 
         h1 {
@@ -157,6 +158,14 @@
             font-style: italic;
             color: var(--text-light);
             margin-bottom: 30px;
+            font-size: 1.1em;
+            line-height: 1.6;
+        }
+
+        .fecha-boda {
+            font-weight: 600;
+            color: var(--gold-dark);
+            font-style: normal;
             font-size: 1.1em;
         }
 
@@ -292,7 +301,7 @@
             font-family: 'Pinyon Script', cursive;
             color: var(--gold);
             font-size: 3.5em;
-            margin-bottom: 10px;
+            margin-bottom: 15px;
             line-height: 1;
         }
 
@@ -323,9 +332,9 @@
 
     <div id="contenido-principal">
         <div class="form-container">
-            <div class="flores-decorativas">Con amor</div>
+            <div class="flores-decorativas">Con amor, Estefy y Ema</div>
             <h1>Nuestra Boda</h1>
-            <p class="subtitle">Confirma tu asistencia y acompáñanos a celebrar</p>
+            <p class="subtitle"><span class="fecha-boda">05 / 07 / 2026</span><br>Confirma tu asistencia y acompáñanos a celebrar</p>
             <div class="separador"></div>
 
             <div id="mensaje-error">
@@ -334,7 +343,7 @@
 
             <div id="mensaje-exito">
                 <h2>¡Gracias!</h2>
-                <p class="subtitle" style="margin-bottom: 0;">Hemos registrado tu respuesta exitosamente.<br>¡Nos hace mucha ilusión!</p>
+                <p class="subtitle" style="margin-bottom: 0;">Hemos registrado tu respuesta exitosamente.<br>¡Nos hace mucha ilusión compartir el <b>05/07/2026</b> contigo!</p>
             </div>
 
             <form id="rsvp-form">
@@ -413,7 +422,7 @@
             }
         };
 
-        // --- LÓGICA DE FIREBASE CON TUS CREDENCIALES ---
+        // --- LÓGICA DE FIREBASE ---
         const firebaseConfig = {
             apiKey: "AIzaSyAkIglpZfb1d-38Z5EVqLIRO3X3_ggR2lk",
             authDomain: "boda-7968e.firebaseapp.com",
@@ -464,7 +473,7 @@
                 document.getElementById('mensaje-exito').style.display = 'block';
             } catch (error) {
                 console.error("Error guardando documento:", error);
-                errorBox.innerHTML = "Error al guardar. Asegúrate de haber actualizado las <b>Reglas de Firestore</b> a <i>allow read, write: if true;</i>";
+                errorBox.innerHTML = "Error al guardar. Asegúrate de tener conexión a internet.";
                 errorBox.style.display = 'block';
                 btnSubmit.innerText = "Enviar Respuesta";
                 btnSubmit.disabled = false;
