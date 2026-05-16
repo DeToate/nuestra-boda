@@ -203,10 +203,11 @@
     <div id="login-screen">
         <div class="login-box">
             <h2>Acceso Privado</h2>
-            <p style="color:#666; font-size:0.9em; margin-bottom: 20px;">Introduce la contraseña para ver la lista de invitados</p>
-            <p id="login-error" class="error-msg">Contraseña incorrecta</p>
+            <p style="color:#666; font-size:0.9em; margin-bottom: 20px;">Inicia sesión para ver la lista de invitados</p>
+            <p id="login-error" class="error-msg">Correo o contraseña incorrectos</p>
+            <input type="email" id="email-input" placeholder="Correo electrónico">
             <input type="password" id="password-input" placeholder="Contraseña">
-            <button onclick="checkLogin()">Entrar</button>
+            <button id="btn-login" onclick="checkLogin()">Entrar</button>
         </div>
     </div>
 
@@ -261,6 +262,7 @@
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
         import { getFirestore, collection, onSnapshot } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+        import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
 
         // Variable global para exportar
         window.datosDescarga = [];
@@ -292,26 +294,6 @@
             document.body.removeChild(link);
         };
 
-        // Lógica del Login
-        window.checkLogin = function() {
-            const password = document.getElementById('password-input').value;
-            const errorMsg = document.getElementById('login-error');
-            
-            // LA CONTRASEÑA ES EE2026
-            if (password === 'EE2026') {
-                document.getElementById('login-screen').style.display = 'none';
-                document.getElementById('dashboard-screen').style.display = 'block';
-                iniciarDatosRealtime();
-            } else {
-                errorMsg.style.display = 'block';
-            }
-        };
-
-        // Escuchar Enter en el input de contraseña
-        document.getElementById('password-input').addEventListener('keypress', function (e) {
-            if (e.key === 'Enter') { window.checkLogin(); }
-        });
-
         // --- LÓGICA DE FIREBASE CON TUS CREDENCIALES ---
         const firebaseConfig = {
             apiKey: "AIzaSyAkIglpZfb1d-38Z5EVqLIRO3X3_ggR2lk",
@@ -326,6 +308,43 @@
         
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
+        const auth = getAuth(app);
+
+        // Lógica del Login Seguro
+        window.checkLogin = function() {
+            const email = document.getElementById('email-input').value;
+            const password = document.getElementById('password-input').value;
+            const errorMsg = document.getElementById('login-error');
+            const btnLogin = document.getElementById('btn-login');
+            
+            if(!email || !password) {
+                errorMsg.innerText = "Por favor, ingresa tu correo y contraseña.";
+                errorMsg.style.display = 'block';
+                return;
+            }
+
+            btnLogin.innerText = "Conectando...";
+            btnLogin.disabled = true;
+
+            signInWithEmailAndPassword(auth, email, password)
+                .then((userCredential) => {
+                    document.getElementById('login-screen').style.display = 'none';
+                    document.getElementById('dashboard-screen').style.display = 'block';
+                    iniciarDatosRealtime();
+                })
+                .catch((error) => {
+                    console.error("Error de acceso:", error);
+                    errorMsg.innerText = "Correo o contraseña incorrectos.";
+                    errorMsg.style.display = 'block';
+                    btnLogin.innerText = "Entrar";
+                    btnLogin.disabled = false;
+                });
+        };
+
+        // Escuchar Enter en el input de contraseña
+        document.getElementById('password-input').addEventListener('keypress', function (e) {
+            if (e.key === 'Enter') { window.checkLogin(); }
+        });
 
         function iniciarDatosRealtime() {
             const rsvpRef = collection(db, 'invitados');
