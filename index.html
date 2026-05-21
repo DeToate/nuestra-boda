@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Invitación y Confirmación | Estefy y Ema</title>
+    <title>Invitación y Confirmación de Boda</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Pinyon+Script&display=swap');
 
@@ -31,32 +31,105 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: linear-gradient(135deg, #fdfcfb 0%, #e2d1c3 100%);
+            background: radial-gradient(circle at center, #fffaf0 0%, #f7e8d0 50%, #e2d1c3 100%);
             display: flex;
             justify-content: center;
             align-items: center;
             z-index: 9999;
-            transition: transform 1.2s cubic-bezier(0.77, 0, 0.175, 1), opacity 1.2s ease;
+            transition: opacity 1.5s ease-in-out;
+            overflow: hidden;
         }
 
-        #pantalla-sobre.abierto {
-            transform: translateY(-100vh);
+        /* Contenedor del sobre con perspectiva 3D */
+        .sobre-wrapper {
+            position: relative;
+            width: 380px;
+            height: 280px;
+            perspective: 1500px;
+            transition: transform 1.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        }
+
+        #pantalla-sobre.abierto .sobre-wrapper {
+            transform: translateY(-120vh) rotateX(30deg) scale(0.5);
+        }
+
+        /* La solapa que se abre */
+        .sobre-flap {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #ffffff;
+            clip-path: polygon(0 0, 100% 0, 50% 50%);
+            z-index: 3;
+            transform-origin: top;
+            transition: transform 1s ease-in-out;
+            border: 1px solid rgba(197, 168, 128, 0.2);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+        }
+
+        .abierto .sobre-flap {
+            transform: rotateX(180deg);
+            z-index: 1;
+        }
+
+        /* Efecto de brillo mágico */
+        .magic-glow {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle, rgba(255,255,255,1) 0%, rgba(197,168,128,0) 70%);
+            opacity: 0;
+            transition: opacity 0.8s ease;
+            pointer-events: none;
+            z-index: 4;
+        }
+
+        .abierto .magic-glow {
+            opacity: 0.6;
+            animation: pulseGlow 2s infinite;
+        }
+
+        @keyframes pulseGlow {
+            0% { transform: scale(1); opacity: 0.4; }
+            50% { transform: scale(1.5); opacity: 0.7; }
+            100% { transform: scale(1); opacity: 0.4; }
+        }
+
+        /* Partículas de fantasía */
+        .sparkle {
+            position: absolute;
+            background: white;
+            border-radius: 50%;
+            pointer-events: none;
+            box-shadow: 0 0 10px 2px rgba(255,255,255,0.8);
+            z-index: 10;
             opacity: 0;
         }
 
-        .sobre-contenido {
-            background: #ffffff;
-            padding: 60px 40px;
-            text-align: center;
-            border-radius: 4px;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.08);
-            border: 1px solid rgba(197, 168, 128, 0.3);
-            max-width: 400px;
-            width: 85%;
-            position: relative;
+        @keyframes flySparkle {
+            0% { transform: translate(0, 0) scale(0); opacity: 1; }
+            100% { transform: translate(var(--x), var(--y)) scale(1); opacity: 0; }
         }
 
-        .sobre-contenido::before {
+        .sobre-cuerpo {
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+            height: 100%;
+            background: #ffffff;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            border: 1px solid rgba(197, 168, 128, 0.3);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 4;
+        }
+
+        .sobre-cuerpo::before {
             content: '';
             position: absolute;
             top: 15px; left: 15px; right: 15px; bottom: 15px;
@@ -71,15 +144,19 @@
             color: var(--gold);
             margin-bottom: 10px;
             line-height: 1;
+            position: relative;
+            z-index: 10;
         }
 
         .sobre-texto {
             font-family: 'Playfair Display', serif;
-            font-size: 1.1em;
+            font-size: 1.2em;
             color: var(--text-dark);
             margin-bottom: 40px;
             letter-spacing: 2px;
             text-transform: uppercase;
+            position: relative;
+            z-index: 10;
         }
 
         .btn-abrir {
@@ -95,6 +172,8 @@
             transition: all 0.3s ease;
             font-family: 'Montserrat', sans-serif;
             box-shadow: 0 8px 20px rgba(197, 168, 128, 0.4);
+            position: relative;
+            z-index: 10;
         }
 
         .btn-abrir:hover {
@@ -135,14 +214,24 @@
             width: 100%;
             border: 1px solid rgba(255, 255, 255, 0.8);
             text-align: center;
+            /* Estado inicial para el efecto de despliegue */
+            opacity: 0;
+            transform: perspective(1000px) rotateX(-15deg) translateY(50px) scale(0.9);
+            transition: transform 1.2s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 1s ease;
+            pointer-events: none;
+        }
+
+        .form-container.aparecer {
+            opacity: 1;
+            transform: perspective(1000px) rotateX(0deg) translateY(0) scale(1);
+            pointer-events: auto;
         }
 
         .flores-decorativas {
             font-family: 'Pinyon Script', cursive;
             color: var(--gold);
-            font-size: 2.3em;
+            font-size: 2.5em;
             margin-bottom: -10px;
-            line-height: 1.2;
         }
 
         h1 {
@@ -158,14 +247,6 @@
             font-style: italic;
             color: var(--text-light);
             margin-bottom: 30px;
-            font-size: 1.1em;
-            line-height: 1.6;
-        }
-
-        .fecha-boda {
-            font-weight: 600;
-            color: var(--gold-dark);
-            font-style: normal;
             font-size: 1.1em;
         }
 
@@ -301,7 +382,7 @@
             font-family: 'Pinyon Script', cursive;
             color: var(--gold);
             font-size: 3.5em;
-            margin-bottom: 15px;
+            margin-bottom: 10px;
             line-height: 1;
         }
 
@@ -319,23 +400,89 @@
                 padding: 40px 25px;
             }
         }
+
+        /* Estilos de la Cuenta Regresiva */
+        .countdown-container {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin: 20px 0 30px;
+        }
+
+        .countdown-item {
+            text-align: center;
+            min-width: 60px;
+        }
+
+        .countdown-number {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.8em;
+            color: var(--gold);
+            font-weight: 700;
+            display: block;
+        }
+
+        .countdown-label {
+            font-size: 0.65em;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--text-light);
+        }
+
+        /* Control de música flotante */
+        .music-control {
+            position: fixed;
+            bottom: 25px;
+            right: 25px;
+            z-index: 1000;
+            background: white;
+            border: 1px solid var(--gold);
+            color: var(--gold);
+            border-radius: 50%;
+            width: 45px;
+            height: 45px;
+            display: none; /* Se muestra al abrir el sobre */
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            font-size: 1.2em;
+            transition: all 0.3s ease;
+            outline: none;
+        }
+
+        .music-control:hover {
+            transform: scale(1.1);
+            background-color: #f9f7f4;
+        }
     </style>
 </head>
 <body>
     <div id="pantalla-sobre">
-        <div class="sobre-contenido">
-            <div class="sello-boda">E & E</div>
-            <p class="sobre-texto">Tienes una nueva notificación</p>
-            <button class="btn-abrir" id="btn-abrir" type="button">Abrir Invitación</button>
+        <div class="sobre-wrapper" id="sobre-wrapper">
+            <div class="magic-glow"></div>
+            <div class="sobre-flap"></div>
+            <div class="sobre-cuerpo">
+                <div class="sello-boda">E<sup>2</sup></div>
+                <p class="sobre-texto">Tienes una notificación</p>
+                <button class="btn-abrir" id="btn-abrir" type="button">Abrir Invitación</button>
+            </div>
         </div>
     </div>
 
     <div id="contenido-principal">
         <div class="form-container">
-            <div class="flores-decorativas">Con amor, Estefy y Ema</div>
+            <div class="flores-decorativas">Con amor Estefy y Ema</div>
             <h1>Nuestra Boda</h1>
-            <p class="subtitle"><span class="fecha-boda">05 / 06 / 2027</span><br>Confirma tu asistencia y acompáñanos a celebrar</p>
+            <p class="subtitle">Confirma tu asistencia y acompáñanos a celebrar el día 05/06/2027</p>
             <div class="separador"></div>
+
+            <div class="countdown-container" id="countdown">
+                <div class="countdown-item"><span class="countdown-number" id="days">00</span><span class="countdown-label">Días</span></div>
+                <div class="countdown-item"><span class="countdown-number" id="hours">00</span><span class="countdown-label">Horas</span></div>
+                <div class="countdown-item"><span class="countdown-number" id="minutes">00</span><span class="countdown-label">Min</span></div>
+                <div class="countdown-item"><span class="countdown-number" id="seconds">00</span><span class="countdown-label">Seg</span></div>
+            </div>
 
             <div id="mensaje-error">
                 Hubo un error de conexión. Por favor, intenta de nuevo.
@@ -343,7 +490,7 @@
 
             <div id="mensaje-exito">
                 <h2>¡Gracias!</h2>
-                <p class="subtitle" style="margin-bottom: 0;">Hemos registrado tu respuesta exitosamente.<br>¡Nos hace mucha ilusión compartir el <b>05/06/2027</b> contigo!</p>
+                <p class="subtitle" style="margin-bottom: 0;">Hemos registrado tu respuesta exitosamente.<br>¡Nos hace mucha ilusión!</p>
             </div>
 
             <form id="rsvp-form">
@@ -395,6 +542,12 @@
         </div>
     </div>
 
+    <!-- Elementos de Audio -->
+    <audio id="musica-boda" loop>
+        <source src="https://cdn.pixabay.com/audio/2022/05/27/audio_180873748b.mp3" type="audio/mpeg">
+    </audio>
+    <button id="music-toggle" class="music-control" title="Pausar/Reproducir música">🔊</button>
+
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
         import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
@@ -402,11 +555,89 @@
         // Interfaz: Apertura del sobre
         document.getElementById('btn-abrir').addEventListener('click', function() {
             const pantallaSobre = document.getElementById('pantalla-sobre');
+            const formContainer = document.querySelector('.form-container');
+            const musica = document.getElementById('musica-boda');
+            const musicBtn = document.getElementById('music-toggle');
+            
+            // Efecto de partículas de fantasía
+            for(let i = 0; i < 30; i++) {
+                createSparkle();
+            }
+
             pantallaSobre.classList.add('abierto');
+            
+            // Iniciar música y mostrar el botón de control
+            musica.play().catch(e => console.log("Audio play blocked until user interaction fully registered."));
+            musicBtn.style.display = 'flex';
+
+            // Iniciamos el despliegue del contenido un poco después de que el sobre empiece a moverse
+            setTimeout(() => {
+                formContainer.classList.add('aparecer');
+            }, 800);
+
             setTimeout(() => {
                 pantallaSobre.style.display = 'none';
-            }, 1200);
+            }, 1500);
         });
+
+        function createSparkle() {
+            const sparkle = document.createElement('div');
+            sparkle.className = 'sparkle';
+            const size = Math.random() * 8 + 4 + 'px';
+            sparkle.style.width = size;
+            sparkle.style.height = size;
+            
+            const x = (Math.random() - 0.5) * 400 + 'px';
+            const y = (Math.random() - 0.5) * 400 - 100 + 'px';
+            
+            sparkle.style.setProperty('--x', x);
+            sparkle.style.setProperty('--y', y);
+            sparkle.style.left = '50%';
+            sparkle.style.top = '50%';
+            sparkle.style.animation = `flySparkle ${Math.random() * 1 + 1}s forwards`;
+            
+            document.getElementById('pantalla-sobre').appendChild(sparkle);
+            setTimeout(() => sparkle.remove(), 2000);
+        }
+
+        // Lógica del botón de música (Play/Pause)
+        document.getElementById('music-toggle').addEventListener('click', function() {
+            const musica = document.getElementById('musica-boda');
+            if (musica.paused) {
+                musica.play();
+                this.innerText = '🔊';
+            } else {
+                musica.pause();
+                this.innerText = '🔇';
+            }
+        });
+
+        // Lógica de la Cuenta Regresiva
+        function updateCountdown() {
+            // Fecha de la boda: 5 de Junio de 2027
+            const weddingDate = new Date('June 5, 2027 00:00:00').getTime();
+            const now = new Date().getTime();
+            const distance = weddingDate - now;
+
+            if (distance < 0) {
+                document.getElementById('countdown').innerHTML = "<p class='subtitle'>¡Hoy es el gran día!</p>";
+                return;
+            }
+
+            const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+            document.getElementById('days').innerText = days.toString().padStart(2, '0');
+            document.getElementById('hours').innerText = hours.toString().padStart(2, '0');
+            document.getElementById('minutes').innerText = minutes.toString().padStart(2, '0');
+            document.getElementById('seconds').innerText = seconds.toString().padStart(2, '0');
+        }
+
+        // Actualizar cada segundo
+        setInterval(updateCountdown, 1000);
+        updateCountdown(); // Ejecución inicial
 
         // Interfaz: Mostrar/Ocultar sección de niños
         window.toggleNinos = function(mostrar) {
@@ -422,7 +653,7 @@
             }
         };
 
-        // --- LÓGICA DE FIREBASE ---
+        // --- LÓGICA DE FIREBASE CON TUS CREDENCIALES ---
         const firebaseConfig = {
             apiKey: "AIzaSyAkIglpZfb1d-38Z5EVqLIRO3X3_ggR2lk",
             authDomain: "boda-7968e.firebaseapp.com",
@@ -473,7 +704,7 @@
                 document.getElementById('mensaje-exito').style.display = 'block';
             } catch (error) {
                 console.error("Error guardando documento:", error);
-                errorBox.innerHTML = "Error al guardar. Asegúrate de tener conexión a internet.";
+                errorBox.innerHTML = "Error al guardar. Asegúrate de haber actualizado las <b>Reglas de Firestore</b> a <i>allow read, write: if true;</i>";
                 errorBox.style.display = 'block';
                 btnSubmit.innerText = "Enviar Respuesta";
                 btnSubmit.disabled = false;
